@@ -12,7 +12,7 @@ export default class app
     // bind database methods to API endpoints
     this.app.get('/get_user', (req, res) => db.get(req.query, res))
     this.app.post('/create_user', (req, res) => db.create(req.query, res))
-    this.app.delete('delete_user', (req, res) => db.delete(req.query, res))
+    this.app.delete('/delete_user', (req, res) => db.delete(req.query, res))
     this.app.get('/login_user', (req, res) => db.login(req.query, res))
   }
 }

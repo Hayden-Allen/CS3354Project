@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3'
 import message from './message.js'
-import { zip_strings } from './utils.js'
+import { zip_strings, string_any } from './utils.js'
 
 // database class, right now just operates on the user table
 export default class database
@@ -47,12 +47,41 @@ export default class database
     // check that `values` contains an entry for every column in the table
     // (default values aren't supported, everything must be set explicitly)
     for(var field of this.columns.map(e => e.name))
-      if(!values[field])
-      {
-        // found a column that `values` does not specify a value for
-        res.send(new message(`create_user query must contain '${field}'`))
-        return
-      }
+    {
+        if(!values[field])
+        {
+          // found a column that `values` does not specify a value for
+          res.send(new message(`create_user query must contain '${field}'`))
+          return
+        }
+    }
+    if(!values.verify_password)
+    {
+      res.send(new message('password must be typed twice and sent using verify_password'))
+      return
+    }
+
+    // check username and password requirements
+    if(string_any(values.username, c => /\s/.test(c)))
+    {
+      res.send(new message('username cannot contain spaces'))
+      return
+    }
+    if(!string_any(values.username, c => /[a-zA-Z]/.test(c)))
+    {
+      res.send(new message('username must contain at least 1 letter'))
+      return
+    }
+    if(values.password.length <= 8)
+    {
+      res.send(new message('password must be at least 9 characters'))
+      return
+    }
+    if(values.password !== values.verify_password)
+    {
+      res.send(new message('passwords do not match'))
+      return
+    }
 
     // If a user with the same username already exists, return a message saying as much.
     // Otherwise, create the new user according to `values` and return a success message.
@@ -90,7 +119,7 @@ export default class database
       row =>
       {
         if(password === row.password)
-          res.send(new message(`succesfully logged in user '${username}'`))
+          res.send(new message(`successfully logged in user '${username}'`))
         else
           res.send(new message(`incorrect password for user '${username}'`))
       },

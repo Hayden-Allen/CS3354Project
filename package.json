@@ -4,11 +4,12 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "build": "node src/main.js",
+    "tests": "node src/run/tests.js",
+    "background": "node src/run/background.js",
     "watch": "npm-watch"
   },
   "watch": {
-    "build": {
+    "background": {
       "patterns": [
         "src"
       ],

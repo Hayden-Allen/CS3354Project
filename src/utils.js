@@ -8,3 +8,11 @@ export function zip_strings(obj)
   obj.forEach(o => strs.push(`${Object.getOwnPropertyNames(o).map(n => o[n]).join(' ')}`))
   return strs.join(', ')
 }
+
+export function string_any(s, fn)
+{
+  for(const c of s)
+    if(fn(c))
+      return true
+  return false
+}
